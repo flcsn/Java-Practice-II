@@ -1,0 +1,7 @@
+FlightControl\logic\FlightControl.class
+FlightControl\ui\FlightControlUI.class
+FlightControl\domain\Airplane.class
+FlightControl\domain\Airport.class
+FlightControl\domain\Flight.class
+FlightControl\Main.class
+FlightControl\ui\AirportAssetControlUI.class

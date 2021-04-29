@@ -35,7 +35,7 @@ public class Airplane {
     }
     
     public String toString() {
-        return "Airplane " + this.id;
+        return this.id + " (" + this.capacity + " capacity)";
     }
     
 }

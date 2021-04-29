@@ -17,12 +17,12 @@ import FlightControl.domain.Airport;
  */
 public class FlightControl {
     private HashMap<String, Airplane> planes;
-    private HashMap<String, Flight> flights;
+    private ArrayList<Flight> flights;
     private HashMap<String, Airport> airports;
     
     public FlightControl() {
         this.planes = new HashMap<>();
-        this.flights = new HashMap<>();
+        this.flights = new ArrayList<>();
         this.airports = new HashMap<>();
     }
     
@@ -31,20 +31,34 @@ public class FlightControl {
         planes.putIfAbsent(id, newPlane);
     }
     
-    public void addFlight(String id, String placeOfDeparture, String placeOfArrival) {
+    public void addFlight(String planeId, String placeOfDeparture, String placeOfArrival) {
         this.airports.putIfAbsent(placeOfDeparture, new Airport(placeOfDeparture));
         this.airports.putIfAbsent(placeOfArrival, new Airport(placeOfArrival));
         
-        this.flights.put(id, new Flight(this.planes.get(id), this.airports.get(placeOfDeparture), this.airports.get(placeOfArrival)));
+        this.flights.add(new Flight(this.planes.get(planeId), this.airports.get(placeOfDeparture), this.airports.get(placeOfArrival)));
     }
     
     public boolean checkIfAirplaneExists(String id) {
-        for (Airplane plane : planes.values()) {
-            if (id.equals(plane.getId())) {
+        for (String planeId : planes.keySet()) {
+            if (id.equals(planeId)) {
                 return true;
             }
         }
         return false;
+    }
+    
+    public void printAirplanes() {
+        planes.values().stream()
+                .forEach(plane -> System.out.println(plane));
+    }
+    
+    public void printFlights() {
+        flights.stream()
+                .forEach(flight -> System.out.println(flight));
+    }
+    
+    public void printOneAirplane(String id) {
+        System.out.println(planes.get(id));
     }
     
     

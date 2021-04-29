@@ -33,6 +33,6 @@ public class Flight {
     }
     
     public String toString() {
-        return this.plane + ": " + this.placeOfArrival + " -> " + this.placeOfDeparture;
+        return this.plane + " (" + this.placeOfDeparture.getCode() + "-" + this.placeOfArrival.getCode() + ")";
     }
 }

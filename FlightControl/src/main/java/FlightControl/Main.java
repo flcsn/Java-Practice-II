@@ -12,7 +12,10 @@ public class Main {
         // Write the main program here. It is useful to create some classes of your own.
         Scanner scanner = new Scanner(System.in);
         FlightControl flightControl = new FlightControl();
-        TextInterface textInterface = new TextInterface(scanner, flightControl);
+        AirportAssetControlUI AAC = new AirportAssetControlUI(scanner, flightControl);
+        FlightControlUI FC = new FlightControlUI(scanner, flightControl);
         
+        AAC.start();
+        FC.start();
     }
 }
