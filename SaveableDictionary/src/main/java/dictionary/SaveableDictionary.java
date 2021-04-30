@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Scanner;
 import java.nio.file.Paths;
 import java.io.FileWriter;
+import java.util.Iterator;
+import java.util.ArrayList;
 
 /**
  *
@@ -21,7 +23,6 @@ public class SaveableDictionary {
     public SaveableDictionary(String file) {
         this.translations = new HashMap<>();
         this.file = file;
-        this.load();
     }
     
     public SaveableDictionary() {
@@ -38,9 +39,18 @@ public class SaveableDictionary {
     }
     
     public void delete(String word) {
-        for (String translation : translations.keySet()) {
-            if (word.equals(translation) || word.equals(translations.get(translation))) {
-                translations.remove(translation);
+        Iterator iterator = translations.keySet().iterator();
+        while (iterator.hasNext()) {
+            if (iterator.next().equals(word)) {
+                iterator.remove();
+            }
+        }
+        
+        iterator = translations.values().iterator();
+        
+        while (iterator.hasNext()) {
+            if (iterator.next().equals(word)) {
+                iterator.remove();
             }
         }
     }
@@ -59,9 +69,15 @@ public class SaveableDictionary {
     }
     
     public boolean save(){
+        ArrayList<String> alreadySaved = new ArrayList<>();
+        
         try (FileWriter fileWriter = new FileWriter(file)) {
             for (String word : translations.keySet()) {
-                fileWriter.write(word + ":" + translations.get(word));
+                if (!alreadySaved.contains(word)) {
+                    fileWriter.write(word + ":" + translations.get(word) + "\n");
+                    alreadySaved.add(word);
+                    alreadySaved.add(translations.get(word));
+                }
             }
             fileWriter.flush();
             fileWriter.close();
