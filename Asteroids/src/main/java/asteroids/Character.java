@@ -28,6 +28,14 @@ public abstract class Character {
         return this.polygon;
     }
     
+    public Point2D getMovement() {
+        return this.movement;
+    }
+    
+    public void setMovement(Point2D movement) {
+        this.movement = movement;
+    }
+    
     public void turnLeft() {
         this.polygon.setRotate(polygon.getRotate()-5);
     }
@@ -37,8 +45,22 @@ public abstract class Character {
     }
     
     public void move() {
-        this.polygon.setTranslateX(this.polygon.getTranslateX() + this.movement.getX());
-        this.polygon.setTranslateY(this.polygon.getTranslateY() + this.movement.getY());
+        double currentXPosition = this.polygon.getTranslateX();
+        double currentYPosition = this.polygon.getTranslateY();
+        
+        this.polygon.setTranslateX(currentXPosition + this.movement.getX());
+        this.polygon.setTranslateY(currentYPosition + this.movement.getY());
+        
+        if (currentXPosition > AsteroidsApplication.WIDTH) {
+            this.polygon.setTranslateX(currentXPosition - AsteroidsApplication.WIDTH);
+        } else if (currentXPosition < 0) {
+            this.polygon.setTranslateX(currentXPosition + AsteroidsApplication.WIDTH);
+        }
+        if (currentYPosition > AsteroidsApplication.HEIGHT) {
+            this.polygon.setTranslateY(currentYPosition - AsteroidsApplication.HEIGHT);
+        } else if (currentYPosition < 0) {
+            this.polygon.setTranslateY(currentYPosition + AsteroidsApplication.HEIGHT);
+        }
     }
     
     public void accelerate() {
