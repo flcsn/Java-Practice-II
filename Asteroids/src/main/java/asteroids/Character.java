@@ -8,6 +8,9 @@ package asteroids;
 import javafx.scene.shape.Polygon;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Shape;
+import java.util.List;
+import javafx.scene.layout.Pane;
+import java.util.stream.Collectors;
 /**
  *
  * @author Frankie
@@ -15,6 +18,7 @@ import javafx.scene.shape.Shape;
 public abstract class Character {
     private Polygon polygon;
     private Point2D movement;
+    private boolean alive;
     
     public Character(Polygon polygon, int x, int y) {
         this.polygon = polygon;
@@ -22,6 +26,7 @@ public abstract class Character {
         this.polygon.setTranslateY(y);
         
         this.movement = new Point2D(0,0);
+        this.alive = true;
     }
     
     public Polygon getCharacter() {
@@ -30,6 +35,14 @@ public abstract class Character {
     
     public Point2D getMovement() {
         return this.movement;
+    }
+    
+    public boolean isAlive() {
+        return alive;
+    }
+    
+    public void setAlive(boolean bool) {
+        this.alive = bool;
     }
     
     public void setMovement(Point2D movement) {
@@ -74,6 +87,8 @@ public abstract class Character {
         Shape collisionArea = Shape.intersect(this.polygon, other.getCharacter());
         return collisionArea.getBoundsInLocal().getHeight() != -1;
     }
+    
+
     
     
 }

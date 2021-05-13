@@ -4,16 +4,16 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Polygon;
 import javafx.scene.input.KeyCode;
 import javafx.animation.AnimationTimer;
-import javafx.geometry.Point2D;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.stream.Collectors;
+import javafx.scene.text.Text;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class AsteroidsApplication extends Application {
     public static int WIDTH = 600;
@@ -22,6 +22,10 @@ public class AsteroidsApplication extends Application {
     public void start(Stage window) throws Exception {
         Pane layout = new Pane();
         layout.setPrefSize(WIDTH, HEIGHT);
+        
+        Text pointsText = new Text(10, 20, "Points: 0");
+        AtomicInteger points = new AtomicInteger();
+        layout.getChildren().add(pointsText);
         
         Ship ship = new Ship(WIDTH/2, HEIGHT/2);
         List<Asteroid> asteroids = new ArrayList<>();
@@ -53,6 +57,16 @@ public class AsteroidsApplication extends Application {
             
             @Override
             public void handle(long now) {
+                if (Math.random() < 0.005) {
+                    Random random = new Random();
+                    Asteroid asteroid = new Asteroid(random.nextInt(WIDTH/3), random.nextInt(HEIGHT));
+                    
+                    if (!asteroid.collide(ship)) {
+                        asteroids.add(asteroid);
+                        layout.getChildren().add(asteroid.getCharacter());
+                    }
+                }
+                
                 if (pressedKeys.getOrDefault(KeyCode.LEFT, false)) {
                     ship.turnLeft();
                 }
@@ -70,28 +84,30 @@ public class AsteroidsApplication extends Application {
                     projectile.accelerate();
                     projectile.setMovement(projectile.getMovement().normalize().multiply(3));
                     
-                    
                     layout.getChildren().add(projectile.getCharacter());
                 }
                 
                 ship.move();
+                
                 asteroids.forEach(asteroid -> asteroid.move());
                 asteroids.forEach(asteroid -> {
                     if (ship.collide(asteroid)) {
                         stop();
                     }
                 });
+                
                 projectiles.forEach(projectile -> projectile.move());
                 projectiles.forEach(projectile -> {
-                    List<Asteroid> asteroidsCollidedWith = asteroids.stream()
-                            .filter(asteroid -> projectile.collide(asteroid))
-                            .collect(Collectors.toList());
-                    asteroidsCollidedWith.stream()
-                            .forEach(asteroid -> {
-                                asteroids.remove(asteroid);
-                                layout.getChildren().remove(asteroid.getCharacter());
-                            });
+                    asteroids.forEach(asteroid -> {
+                        if (projectile.collide(asteroid)) {
+                            projectile.setAlive(false);
+                            asteroid.setAlive(false);
+                            pointsText.setText("Points: " + points.addAndGet(1000));
+                        }
+                    });
                 });
+                removeDeadCharacters(projectiles, layout);
+                removeDeadCharacters(asteroids, layout);
             }
         }.start();
         
@@ -103,12 +119,20 @@ public class AsteroidsApplication extends Application {
     public static void main(String[] args) {
         launch(AsteroidsApplication.class);
     }
-    
-    
 
     public static int partsCompleted() {
         // State how many parts you have completed using the return value of this method
-        return 3;
+        return 4;
     }
-
+    
+    public static void removeDeadCharacters(List<? extends Character> listOfCharacters, Pane layout) {
+        List<Character> charactersToRemove = listOfCharacters.stream()
+                .filter(character -> !character.isAlive())
+                .collect(Collectors.toList());
+        
+        listOfCharacters.removeAll(charactersToRemove);
+        layout.getChildren().removeAll(charactersToRemove.stream()
+                .map(character -> character.getCharacter())
+                .collect(Collectors.toList()));
+    }
 }
